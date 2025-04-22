@@ -12,7 +12,7 @@ from torchvision import transforms
 from torchvision.datasets import ImageFolder
 
 # Custom packages
-import src.config as cfg
+import config as cfg
 
 
 class TinyImageNetDatasetModule(LightningDataModule):
@@ -89,3 +89,7 @@ class TinyImageNetDatasetModule(LightningDataModule):
             num_workers=cfg.NUM_WORKERS,
             batch_size=self.batch_size,
         )
+
+if __name__ == "__main__":
+    dataset_module = TinyImageNetDatasetModule()
+    dataset_module.prepare_data()

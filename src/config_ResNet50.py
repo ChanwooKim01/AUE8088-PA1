@@ -23,7 +23,6 @@ IMAGE_STD           = [0.2302, 0.2265, 0.2262]
 
 # Network
 MODEL_NAME          = 'resnet50'
-# MODEL_NAME          = 'MyNetwork'
 
 # Compute related
 ACCELERATOR         = 'gpu'

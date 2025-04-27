@@ -1,0 +1,5 @@
+[default]
+entity = chanwookim01-hanyang-university
+project = AUE8088-PA1
+base_url = https://api.wandb.ai
+

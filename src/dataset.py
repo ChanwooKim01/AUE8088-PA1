@@ -12,8 +12,7 @@ from torchvision import transforms
 from torchvision.datasets import ImageFolder
 
 # Custom packages
-import config as cfg
-
+import src.config as cfg
 
 class TinyImageNetDatasetModule(LightningDataModule):
     __DATASET_NAME__ = 'tiny-imagenet-200'

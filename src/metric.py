@@ -7,7 +7,6 @@ class MyF1Score(Metric):
     def __init__(self):
         super().__init__()
         self.add_state("TP", default=torch.zeros(cfg.NUM_CLASSES), dist_reduce_fx="sum")
-        self.add_state("TN", default=torch.zeros(cfg.NUM_CLASSES), dist_reduce_fx="sum")
         self.add_state("FP", default=torch.zeros(cfg.NUM_CLASSES), dist_reduce_fx="sum")
         self.add_state("FN", default=torch.zeros(cfg.NUM_CLASSES), dist_reduce_fx="sum")
 
@@ -17,25 +16,37 @@ class MyF1Score(Metric):
         assert preds.shape == target.shape, \
         f'preds and target do not have equal shape! \npred shape: {preds.shape} \ntarget shape: {target.shape}'
 
-        for cls in range(cfg.NUM_CLASSES):
-            pred_cls    = (preds == cls)
-            target_cls  = (target == cls)
+        for cls_ in range(cfg.NUM_CLASSES):
+            pred_cls    = (preds == cls_)
+            target_cls  = (target == cls_)
 
-            self.TP[cls] += torch.sum(pred_cls & target_cls)
-            self.FP[cls] += torch.sum(pred_cls & (~target_cls))
-            self.FN[cls] += torch.sum((~pred_cls) & target_cls)
+            self.TP[cls_] += torch.sum(pred_cls & target_cls)
+            self.FP[cls_] += torch.sum(pred_cls & (~target_cls))
+            self.FN[cls_] += torch.sum((~pred_cls) & target_cls)
 
     def compute(self):
         f1_scores   = torch.zeros(cfg.NUM_CLASSES)
         precision   = torch.zeros(cfg.NUM_CLASSES)
         recall      = torch.zeros(cfg.NUM_CLASSES)
         
-        for cls in range(cfg.NUM_CLASSES):
-            precision[cls] = self.TP[cls] / (self.TP[cls] + self.FP[cls])
-            recall[cls] = self.TP[cls] / (self.TP[cls] + self.FN[cls])
-            f1_scores[cls] = (2 * precision[cls] * recall[cls]) / (precision[cls] + recall[cls])   
+        for cls_ in range(cfg.NUM_CLASSES):
+            if (self.TP[cls_] + self.FP[cls_]) > 0:
+                precision[cls_] = self.TP[cls_] / (self.TP[cls_] + self.FP[cls_])
+            else:
+                precision[cls_] = 0
+
+            if (self.TP[cls_] + self.FN[cls_]) > 0:
+                recall[cls_] = self.TP[cls_] / (self.TP[cls_] + self.FN[cls_])
+            else:
+                recall[cls_] = 0
+            
+            if (precision[cls_] + recall[cls_]) > 0:
+                f1_scores[cls_] = 2 * precision[cls_] * recall[cls_] / (precision[cls_] + recall[cls_])
+            else:
+                f1_scores[cls_] = 0  
         
         return f1_scores
+    
     
 class MyAccuracy(Metric):
     def __init__(self):
@@ -49,7 +60,7 @@ class MyAccuracy(Metric):
 
         # [TODO] check if preds and target have equal shape
         assert (preds.shape == target.shape), \
-        f'preds and target does not have equal shape! \npred shape: {preds.shape} \ntarget shape:{target.shape}'
+        f'preds and target do not have equal shape! \npred shape: {preds.shape} \ntarget shape:{target.shape}'
 
         # [TODO] Cound the number of correct prediction
         correct = torch.sum(preds == target)

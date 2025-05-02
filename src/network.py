@@ -23,8 +23,6 @@ class MyNetwork(AlexNet):
         super().__init__()
 
         # [TODO] Modify feature extractor part in AlexNet
-        
-        # existed feature extractor -> need to be modified for performance improvement!
         # self.features = nn.Sequential(
         #     nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
         #     nn.ReLU(inplace=True),
@@ -49,6 +47,126 @@ class MyNetwork(AlexNet):
         x = self.classifier(x)
         return x
 
+class MyNetwork1(AlexNet):
+    def __init__(self):
+        super().__init__()
+
+        # [TODO] Modify feature extractor part in AlexNet
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            
+            nn.Conv2d(64, 192, kernel_size=5, padding=2),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(192),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.BatchNorm2d(384),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # [TODO: Optional] Modify this as well if you want
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
+class MyNetwork2(AlexNet):
+    def __init__(self):
+        super().__init__()
+
+        # [TODO] Modify feature extractor part in AlexNet
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            
+            nn.Conv2d(64, 192, kernel_size=5, padding=2),
+            nn.BatchNorm2d(192),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.BatchNorm2d(384),
+            nn.ReLU(inplace=True),
+            
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            
+            nn.MaxPool2d(kernel_size=3, stride=2),
+        )
+
+class MyNetwork3(AlexNet):
+    def __init__(self):
+        super().__init__()
+
+        # [TODO] Modify feature extractor part in AlexNet 
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),     # [B, 32, 64, 64]
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(32, 32, kernel_size=3, padding=1),    # [B, 32, 64, 64]
+            nn.BatchNorm2d(32),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),          # [B, 32, 32, 32]
+
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),    # [B, 64, 32, 32]
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(64, 64, kernel_size=3, padding=1),    # [B, 64, 32, 32]
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),          # [B, 64, 16, 16]
+
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),   # [B, 128, 16, 16]
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(128, 128, kernel_size=3, padding=1),  # [B, 128, 16, 16]
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),          # [B, 128, 8, 8]
+
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),  # [B, 256, 8, 8]
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),  # [B, 256, 8, 8]
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),          # [B, 256, 4, 4]
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # [TODO: Optional] Modify this as well if you want
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
 class SimpleClassifier(LightningModule):
     def __init__(self,
                  model_name: str = 'resnet18',
@@ -61,6 +179,12 @@ class SimpleClassifier(LightningModule):
         # Network
         if model_name == 'MyNetwork':
             self.model = MyNetwork()
+        elif model_name == 'MyNetwork1':
+            self.model = MyNetwork1()
+        elif model_name == 'MyNetwork2':
+            self.model = MyNetwork2()
+        elif model_name == 'MyNetwork3':
+            self.model = MyNetwork3()
         else:
             models_list = models.list_models()
             assert model_name in models_list, f'Unknown model name: {model_name}. Choose one from {", ".join(models_list)}'
@@ -95,7 +219,7 @@ class SimpleClassifier(LightningModule):
     def training_step(self, batch, batch_idx):
         loss, scores, y = self._common_step(batch)
         accuracy = self.accuracy(scores, y)
-        f1_score = self.f1_scure(scores, y)
+        f1_score = self.f1_score(scores, y)
         self.log_dict({'loss/train': loss, 'accuracy/train': accuracy, 'f1_score/train': f1_score.mean()},
                       on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss
@@ -103,7 +227,7 @@ class SimpleClassifier(LightningModule):
     def validation_step(self, batch, batch_idx):
         loss, scores, y = self._common_step(batch)
         accuracy = self.accuracy(scores, y)
-        f1_score = self.f1_scure(scores, y)
+        f1_score = self.f1_score(scores, y)
         self.log_dict({'loss/val': loss, 'accuracy/val': accuracy, 'f1_score/val': f1_score.mean()},
                       on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self._wandb_log_image(batch, batch_idx, scores, frequency = cfg.WANDB_IMG_LOG_FREQ)

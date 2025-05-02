@@ -9,7 +9,8 @@ NUM_EPOCHS          = 40
 OPTIMIZER_TYPE      = os.environ.get('OPTIMIZER_TYPE', 'SGD')
 
 if OPTIMIZER_TYPE=="Adagrad" or OPTIMIZER_TYPE=="Adam":
-    OPTIMIZER_PARAMS    = {'type': OPTIMIZER_TYPE, 'lr': 0.001}
+    # OPTIMIZER_PARAMS    = {'type': OPTIMIZER_TYPE, 'lr': 0.001}
+    OPTIMIZER_PARAMS    = {'type': OPTIMIZER_TYPE, 'lr': 0.001, 'weight_decay': 1e-4} # weight decay 추가
 else: # SGD or RMSProp
     OPTIMIZER_PARAMS    = {'type': OPTIMIZER_TYPE, 'lr': 0.005, 'momentum': 0.9}
 

@@ -51,8 +51,3 @@ if __name__ == "__main__":
 
     trainer.fit(model, datamodule=datamodule)
     trainer.validate(ckpt_path='best', datamodule=datamodule)
-
-# import src.MyNetwork.config_MyNetwork_SGD as cfg
-# import src.MyNetwork.config_MyNetwork_RMSProp as cfg
-# import src.MyNetwork.config_MyNetwork_AdaGrad as cfg
-# import src.MyNetwork.config_MyNetwork_Adam as cfg

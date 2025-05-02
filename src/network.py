@@ -191,7 +191,7 @@ class SimpleClassifier(LightningModule):
             self.model = models.get_model(model_name, num_classes=num_classes)
 
         # Loss function
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1) # Label smoothing 기법 추가
 
         # Metric
         self.accuracy = MyAccuracy()

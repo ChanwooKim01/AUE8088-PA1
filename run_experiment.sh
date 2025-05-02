@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Model list
-model_list=("MyNetwork" "MyNetwork1" "MyNetwork2" "MyNetwork3") 
-# model_list=("resnet18") 
+# model_list=("MyNetwork" "MyNetwork1" "MyNetwork2" "MyNetwork3") 
+model_list=("resnet18") 
 # torch.optim list
-optimizer_list=("SGD")
+optimizer_list=("Adam")
 
 scheduler_list=("MultiStepLR")
 batch_list=(512)

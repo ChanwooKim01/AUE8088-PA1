@@ -42,8 +42,10 @@ class TinyImageNetDatasetModule(LightningDataModule):
         tf_train = transforms.Compose([
             transforms.RandomRotation(cfg.IMAGE_ROTATION),
             transforms.RandomHorizontalFlip(cfg.IMAGE_FLIP_PROB),
+            RandAugment(), # RandAugment 적용
             transforms.RandomCrop(cfg.IMAGE_NUM_CROPS, padding=cfg.IMAGE_PAD_CROPS),
             transforms.ToTensor(),
+            transforms.RandomErasing(p=0.25, scale=(0.02, 0.33), ratio=(0.3, 3.3)), # Regional Dropout의 대용
             transforms.Normalize(cfg.IMAGE_MEAN, cfg.IMAGE_STD),
         ])
         dataset = ImageFolder(os.path.join(cfg.DATASET_ROOT_PATH, self.__DATASET_NAME__, 'train'), tf_train)
@@ -92,3 +94,6 @@ class TinyImageNetDatasetModule(LightningDataModule):
 if __name__ == "__main__":
     dataset_module = TinyImageNetDatasetModule()
     dataset_module.prepare_data()
+
+from torchvision import transforms
+from torchvision.transforms.autoaugment import RandAugment
